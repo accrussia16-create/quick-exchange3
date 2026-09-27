@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Order Status - Quick Exchange</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --ink: #171A20;
+      --ink-soft: #565C6B;
+      --paper: #F5F3ED;
+      --card: #FFFFFF;
+      --emerald: #0E6E55;
+      --emerald-deep: #0A5744;
+      --border: #E4E0D3;
+      --border-soft: #EDEAE0;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', Arial, sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .header {
+      padding: 30px 20px 16px;
+      text-align: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 26px;
+    }
+
+    .header p {
+      margin: 6px 0 0;
+      color: var(--ink-soft);
+      font-size: 14px;
+    }
+
+    .container {
+      width: 92%;
+      max-width: 480px;
+      margin: 10px auto 40px;
+    }
+
+    .card {
+      background: var(--card);
+      padding: 26px 28px;
+      border-radius: 18px;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 20px 50px -28px rgba(23, 26, 32, 0.28);
+      margin-bottom: 18px;
+    }
+
+    .card h2, .card h3 {
+      margin: 0 0 14px;
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+    }
+
+    .card h2 { font-size: 18px; }
+    .card h3 { font-size: 16px; }
+
+    .order-id {
+      padding: 12px 14px;
+      background: #F5F3ED;
+      border: 1px dashed var(--border);
+      border-radius: 9px;
+      font-weight: 600;
+      font-size: 14px;
+      word-break: break-all;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .row:last-child {
+      border-bottom: 0;
+    }
+
+    .label {
+      color: var(--ink-soft);
+      font-size: 14px;
+    }
+
+    .value {
+      font-weight: 600;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .status {
+      margin-top: 18px;
+      padding: 16px;
+      text-align: center;
+      border-radius: 12px;
+      background: #F0EFE9;
+      font-size: 18px;
+      font-weight: 600;
+      font-family: 'Fraunces', serif;
+    }
+
+    .pending {
+      background: #FBF1DE;
+      color: #8A5A17;
+    }
+
+    .processing {
+      background: #E7F0FB;
+      color: #1E4E8C;
+    }
+
+    .completed {
+      background: #E8F3EA;
+      color: #146B41;
+    }
+
+    .rejected {
+      background: #FBECE9;
+      color: #A23A2E;
+    }
+
+    .button {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      margin-top: 18px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--ink);
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      background: var(--emerald-deep);
+    }
+
+    .error {
+      color: #A23A2E;
+      text-align: center;
+    }
+
+    .small {
+      color: var(--ink-soft);
+      font-size: 13.5px;
+      line-height: 1.55;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <h1>Quick Exchange</h1>
+    <p>Order status</p>
+  </div>
+
+  <div class="container">
+
+    <div class="card">
+
+      <h2>Your order</h2>
+
+      <div
+        class="order-id"
+        id="orderId"
+      >
+        Loading...
+      </div>
+
+      <div
+        id="status"
+        class="status"
+      >
+        Loading...
+      </div>
+
+    </div>
+
+
+    <div
+      class="card"
+      id="details"
+    >
+
+      <h2>Order details</h2>
+
+      <div class="row">
+        <span class="label">
+          You send
+        </span>
+
+        <span
+          class="value"
+          id="sendAmount"
+        >
+          -
+        </span>
+      </div>
+
+
+      <div class="row">
+        <span class="label">
+          Receive method
+        </span>
+
+        <span
+          class="value"
+          id="receiveMethod"
+        >
+          -
+        </span>
+      </div>
+
+
+      <div class="row">
+        <span class="label">
+          Exchange rate
+        </span>
+
+        <span
+          class="value"
+          id="rate"
+        >
+          -
+        </span>
+      </div>
+
+
+      <div class="row">
+        <span class="label">
+          You receive
+        </span>
+
+        <span
+          class="value"
+          id="receiveAmount"
+        >
+          -
+        </span>
+      </div>
+
+
+      <div class="row">
+        <span class="label">
+          Payment reference
+        </span>
+
+        <span
+          class="value"
+          id="paymentRef"
+        >
+          Not submitted
+        </span>
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <h3>What happens next?</h3>
+
+      <p class="small">
+        Your payment is manually reviewed by our
+        team. Once the payment is verified, your
+        order will be processed.
+      </p>
+
+      <a
+        href="/"
+        class="button"
+      >
+        Back to exchange
+      </a>
+
+    </div>
+
+
+    <div
+      id="error"
+      class="error"
+    ></div>
+
+  </div>
+
+
+<script>
+
+const params =
+  new URLSearchParams(
+    window.location.search
+  );
+
+const orderId =
+  params.get("id");
+
+
+function formatMethod(method) {
+
+  const names = {
+
+    easypaisa: "EasyPaisa",
+
+    jazzcash: "JazzCash",
+
+    usdt: "USDT"
+
+  };
+
+
+  return (
+    names[method] ||
+    method
+  );
+
+}
+
+
+function formatStatus(status) {
+
+  const names = {
+
+    pending: "Pending",
+
+    processing: "Processing",
+
+    completed: "Completed",
+
+    rejected: "Rejected"
+
+  };
+
+
+  return (
+    names[status] ||
+    status
+  );
+
+}
+
+
+async function loadStatus() {
+
+  if (!orderId) {
+
+    document.getElementById(
+      "error"
+    ).textContent =
+      "No order ID was provided.";
+
+    return;
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        `/api/orders/${encodeURIComponent(orderId)}`
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok) {
+
+      document.getElementById(
+        "error"
+      ).textContent =
+        data.error ||
+        "Order not found.";
+
+      return;
+    }
+
+
+    const order =
+      data.order;
+
+
+    document.getElementById(
+      "orderId"
+    ).textContent =
+      order.id;
+
+
+    document.getElementById(
+      "sendAmount"
+    ).textContent =
+      `${order.sendAmount} INR`;
+
+
+    document.getElementById(
+      "receiveMethod"
+    ).textContent =
+      formatMethod(
+        order.receiveMethod
+      );
+
+
+    let unit = "PKR";
+
+
+    if (
+      order.receiveMethod ===
+      "usdt"
+    ) {
+
+      unit = "USDT";
+
+    }
+
+
+    document.getElementById(
+      "rate"
+    ).textContent =
+      `1 INR = ${order.rate} ${unit}`;
+
+
+    document.getElementById(
+      "receiveAmount"
+    ).textContent =
+      `${order.receiveAmount} ${unit}`;
+
+
+    document.getElementById(
+      "paymentRef"
+    ).textContent =
+      order.paymentRef ||
+      "Not submitted";
+
+
+    const statusBox =
+      document.getElementById(
+        "status"
+      );
+
+
+    statusBox.textContent =
+      formatStatus(
+        order.status
+      );
+
+
+    statusBox.className =
+      "status " +
+      order.status;
+
+
+  } catch {
+
+    document.getElementById(
+      "error"
+    ).textContent =
+      "Unable to connect to the server.";
+
+  }
+
+}
+
+
+loadStatus();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Payment - Quick Exchange</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --ink: #171A20;
+      --ink-soft: #565C6B;
+      --paper: #F5F3ED;
+      --card: #FFFFFF;
+      --emerald: #0E6E55;
+      --emerald-deep: #0A5744;
+      --gold: #A9782F;
+      --border: #E4E0D3;
+      --border-soft: #EDEAE0;
+      --danger: #A23A2E;
+      --danger-bg: #FBECE9;
+      --success: #146B41;
+      --success-bg: #E8F3EA;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', Arial, sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .header {
+      padding: 30px 20px 16px;
+      text-align: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 26px;
+    }
+
+    .header p {
+      margin: 6px 0 0;
+      color: var(--ink-soft);
+      font-size: 14px;
+    }
+
+    .container {
+      width: 92%;
+      max-width: 480px;
+      margin: 10px auto 40px;
+    }
+
+    .card {
+      background: var(--card);
+      padding: 26px 28px;
+      border-radius: 18px;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 20px 50px -28px rgba(23, 26, 32, 0.28);
+      margin-bottom: 18px;
+    }
+
+    .card h2 {
+      margin: 0 0 16px;
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    .order-id {
+      background: #F5F3ED;
+      border: 1px dashed var(--border);
+      padding: 12px 14px;
+      border-radius: 9px;
+      font-weight: 600;
+      font-size: 14px;
+      word-break: break-all;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.01em;
+    }
+
+    .amount-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .amount-row:last-of-type { border-bottom: none; }
+
+    .amount-row .label {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      font-weight: 600;
+    }
+
+    .amount-row .amount {
+      font-family: 'Fraunces', serif;
+      font-size: 20px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .amount-row.receive .amount {
+      color: var(--emerald-deep);
+    }
+
+    .rate-note {
+      margin-top: 4px;
+      font-size: 13px;
+      color: var(--ink-soft);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .small {
+      color: var(--ink-soft);
+      font-size: 13.5px;
+      line-height: 1.55;
+      margin-top: 0;
+    }
+
+    .upi-button {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      background: var(--card);
+      color: var(--ink);
+      padding: 14px;
+      margin-top: 10px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .upi-button::after {
+      content: "→";
+      float: right;
+      color: var(--emerald);
+    }
+
+    .upi-button:hover {
+      border-color: var(--emerald);
+      background: #F5FAF8;
+    }
+
+    label {
+      display: block;
+      margin-top: 16px;
+      margin-bottom: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-soft);
+    }
+
+    input {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 15px;
+      font-family: inherit;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--emerald);
+      box-shadow: 0 0 0 3px rgba(14, 110, 85, 0.12);
+    }
+
+    .submit {
+      width: 100%;
+      border: 0;
+      padding: 14px;
+      margin-top: 18px;
+      border-radius: 10px;
+      background: var(--ink);
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .submit:hover {
+      background: var(--emerald-deep);
+    }
+
+    .status-box {
+      padding: 13px 14px;
+      background: #F5F3ED;
+      border-radius: 9px;
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    .error {
+      color: var(--danger);
+      margin-top: 10px;
+      font-size: 13.5px;
+    }
+
+    .success {
+      color: var(--success);
+      margin-top: 10px;
+      font-size: 13.5px;
+    }
+
+    .contact {
+      text-align: center;
+      margin-top: 6px;
+    }
+
+    .contact a {
+      display: inline-block;
+      margin: 5px;
+      padding: 10px 18px;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      text-decoration: none;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <h1>Quick Exchange</h1>
+    <p>Complete your payment</p>
+  </div>
+
+  <div class="container">
+
+    <div class="card">
+
+      <h2>Order created</h2>
+
+      <div class="order-id" id="orderId">
+        Loading...
+      </div>
+
+      <div class="amount-row">
+        <span class="label">You send</span>
+        <span class="amount" id="sendAmount">-</span>
+      </div>
+
+      <div class="amount-row receive">
+        <span class="label">You receive</span>
+        <span class="amount" id="receiveAmount">-</span>
+      </div>
+
+      <p id="rateText" class="rate-note"></p>
+
+    </div>
+
+
+    <div class="card">
+
+      <h2>1. Pay with UPI</h2>
+
+      <p class="small">
+        Select one of the available UPI payment options.
+        You will be redirected to the payment link.
+        After completing the payment, return to this page.
+      </p>
+
+      <div id="upiList">
+        Loading UPI options...
+      </div>
+
+      <div
+        id="upiMessage"
+        class="error"
+      ></div>
+
+    </div>
+
+
+    <div class="card">
+
+      <h2>2. Submit payment reference</h2>
+
+      <p class="small">
+        After completing your payment, enter the
+        transaction/reference ID provided by your payment service.
+      </p>
+
+      <label>
+        Payment / transaction reference
+      </label>
+
+      <input
+        id="paymentRef"
+        type="text"
+        maxlength="100"
+        placeholder="Enter transaction ID"
+      >
+
+      <button
+        class="submit"
+        id="submitPayment"
+      >
+        Submit payment reference
+      </button>
+
+      <div id="submitMessage"></div>
+
+    </div>
+
+
+    <div class="card">
+
+      <h2>Order status</h2>
+
+      <div
+        class="status-box"
+        id="status"
+      >
+        Pending
+      </div>
+
+      <button
+        class="submit"
+        onclick="openStatus()"
+      >
+        Track order
+      </button>
+
+    </div>
+
+
+    <div
+      class="contact"
+      id="contact"
+    ></div>
+
+  </div>
+
+
+<script>
+
+const params =
+  new URLSearchParams(
+    window.location.search
+  );
+
+const orderId =
+  params.get("id");
+
+let order = null;
+let config = null;
+
+
+// ==============================
+// LOAD ORDER
+// ==============================
+
+async function loadOrder() {
+
+  if (!orderId) {
+
+    document.getElementById(
+      "orderId"
+    ).textContent =
+      "No order ID";
+
+    return;
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        `/api/orders/${encodeURIComponent(orderId)}`
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok) {
+
+      document.getElementById(
+        "orderId"
+      ).textContent =
+        "Order not found";
+
+      return;
+    }
+
+
+    order =
+      data.order;
+
+
+    displayOrder();
+
+    await loadConfig();
+
+  } catch {
+
+    document.getElementById(
+      "orderId"
+    ).textContent =
+      "Unable to load order";
+
+  }
+
+}
+
+
+// ==============================
+// DISPLAY ORDER
+// ==============================
+
+function displayOrder() {
+
+  document.getElementById(
+    "orderId"
+  ).textContent =
+    order.id;
+
+
+  document.getElementById(
+    "sendAmount"
+  ).textContent =
+    `${order.sendAmount} INR`;
+
+
+  let unit = "PKR";
+
+
+  if (
+    order.receiveMethod === "usdt"
+  ) {
+    unit = "USDT";
+  }
+
+
+  document.getElementById(
+    "receiveAmount"
+  ).textContent =
+    `${order.receiveAmount} ${unit}`;
+
+
+  document.getElementById(
+    "rateText"
+  ).textContent =
+    `Locked rate: 1 INR = ${order.rate} ${unit}`;
+
+
+  document.getElementById(
+    "status"
+  ).textContent =
+    formatStatus(order.status);
+
+
+  if (order.paymentRef) {
+
+    document.getElementById(
+      "paymentRef"
+    ).value =
+      order.paymentRef;
+
+  }
+
+}
+
+
+// ==============================
+// LOAD PUBLIC CONFIG
+// ==============================
+
+async function loadConfig() {
+
+  const response =
+    await fetch("/api/public");
+
+  config =
+    await response.json();
+
+
+  displayUPI();
+
+  displayContact();
+
+}
+
+
+// ==============================
+// DISPLAY UPI
+// ==============================
+
+function displayUPI() {
+
+  const box =
+    document.getElementById(
+      "upiList"
+    );
+
+
+  box.innerHTML = "";
+
+
+  if (
+    !config.upiLinks ||
+    config.upiLinks.length === 0
+  ) {
+
+    box.innerHTML = `
+      <p>
+        UPI is temporarily unavailable.
+      </p>
+    `;
+
+    document.getElementById(
+      "upiMessage"
+    ).textContent =
+      "Need an active UPI? Please contact us.";
+
+    return;
+  }
+
+
+  config.upiLinks.forEach(
+    upi => {
+
+      const button =
+        document.createElement(
+          "button"
+        );
+
+
+      button.className =
+        "upi-button";
+
+
+      button.textContent =
+        upi.name;
+
+
+      button.onclick =
+        () => payWithUPI(upi);
+
+
+      box.appendChild(
+        button
+      );
+
+    }
+  );
+
+}
+
+
+// ==============================
+// PAY WITH UPI
+// ==============================
+
+function payWithUPI(upi) {
+
+  /*
+    Only allow normal HTTPS links
+    or UPI payment deep links.
+  */
+
+  try {
+
+    const parsed =
+      new URL(upi.url);
+
+
+    if (
+      parsed.protocol !== "https:" &&
+      parsed.protocol !== "upi:"
+    ) {
+
+      alert(
+        "This payment link is not allowed."
+      );
+
+      return;
+    }
+
+
+    /*
+      Save the selected UPI locally.
+      The payment reference is submitted
+      separately after payment.
+    */
+
+    localStorage.setItem(
+      `selectedUpi_${orderId}`,
+      upi.id
+    );
+
+
+    window.location.href =
+      upi.url;
+
+  } catch {
+
+    alert(
+      "Invalid payment link."
+    );
+
+  }
+
+}
+
+
+// ==============================
+// SUBMIT PAYMENT REFERENCE
+// ==============================
+
+async function submitPayment() {
+
+  const paymentRef =
+    document.getElementById(
+      "paymentRef"
+    ).value.trim();
+
+
+  if (!paymentRef) {
+
+    showSubmitMessage(
+      "Please enter your payment/reference ID.",
+      true
+    );
+
+    return;
+  }
+
+
+  try {
+
+    /*
+      NOTE:
+      This endpoint will be added to server.js
+      in the next backend update.
+    */
+
+    const response =
+      await fetch(
+        `/api/orders/${encodeURIComponent(orderId)}`,
+        {
+          method: "PUT",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+              paymentRef:
+                paymentRef
+            })
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok) {
+
+      showSubmitMessage(
+        data.error ||
+        "Unable to submit reference.",
+        true
+      );
+
+      return;
+    }
+
+
+    showSubmitMessage(
+      "Payment reference submitted successfully. Your order is now awaiting verification.",
+      false
+    );
+
+
+    if (data.order) {
+
+      order =
+        data.order;
+
+      displayOrder();
+
+    }
+
+  } catch {
+
+    showSubmitMessage(
+      "Connection error. Please try again.",
+      true
+    );
+
+  }
+
+}
+
+
+// ==============================
+// STATUS
+// ==============================
+
+function formatStatus(status) {
+
+  const names = {
+
+    pending: "Pending",
+
+    processing: "Processing",
+
+    completed: "Completed",
+
+    rejected: "Rejected"
+
+  };
+
+
+  return (
+    names[status] ||
+    status
+  );
+
+}
+
+
+function openStatus() {
+
+  window.location.href =
+    `/status?id=${encodeURIComponent(orderId)}`;
+
+}
+
+
+// ==============================
+// MESSAGES
+// ==============================
+
+function showSubmitMessage(
+  message,
+  error
+) {
+
+  const box =
+    document.getElementById(
+      "submitMessage"
+    );
+
+
+  box.textContent =
+    message;
+
+
+  box.className =
+    error
+      ? "error"
+      : "success";
+
+}
+
+
+// ==============================
+// CONTACT
+// ==============================
+
+function displayContact() {
+
+  const box =
+    document.getElementById(
+      "contact"
+    );
+
+
+  if (
+    !config.contact
+  ) {
+    return;
+  }
+
+
+  let html = "";
+
+
+  if (
+    config.contact.whatsapp
+  ) {
+
+    html += `
+      <a
+        href="${config.contact.whatsapp}"
+        target="_blank"
+        rel="noopener"
+      >
+        WhatsApp
+      </a>
+    `;
+
+  }
+
+
+  if (
+    config.contact.telegram
+  ) {
+
+    html += `
+      <a
+        href="${config.contact.telegram}"
+        target="_blank"
+        rel="noopener"
+      >
+        Telegram
+      </a>
+    `;
+
+  }
+
+
+  box.innerHTML =
+    html;
+
+}
+
+
+// ==============================
+// BUTTON
+// ==============================
+
+document.getElementById(
+  "submitPayment"
+).addEventListener(
+  "click",
+  submitPayment
+);
+
+
+// START
+loadOrder();
+
+</script>
+
+</body>
+</html>
